@@ -1,6 +1,7 @@
 <div align="center">
   <h1>🎯 EasyDecisions</h1>
   <p><strong>A fluent, strongly-typed, DMN-like decision engine for .NET</strong></p>
+  <p><a href="https://mmonteiroc.github.io/easy-decisions/"><strong>Explore the Docs »</strong></a></p>
 
 [![main](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml)
 [![SonarQube](https://github.com/mmonteiroc/easy-decisions/actions/workflows/sonar.yml/badge.svg?branch=main)](https://github.com/mmonteiroc/easy-decisions/actions/workflows/sonar.yml)

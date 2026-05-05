@@ -18,9 +18,10 @@ Traditional DMN engines force you to define your business rules in external XML 
 Instead of writing XML, you write this:
 
 ```csharp
-var decision = Decision<MyInput, MyOutput>.Builder()
-    .When(i => i.Age >= 18).And(i => i.Country == "US")
-    .Then(new MyOutput { CanDrink = false, CanVote = true })
+var decision = new Decision<MyInput, MyOutput>("Eligibility");
+
+decision.When(i => i.Age >= 18).And(i => i.Country == "US")
+    .Then(o => { o.CanDrink = true; o.CanVote = true; })
     .Build();
 ```
 

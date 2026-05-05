@@ -24,17 +24,16 @@ public record DiscountOutput(decimal DiscountPercentage);
 ```csharp
 using EasyDecisions;
 
-var discountDecision = Decision<CartInput, DiscountOutput>.Builder()
-    // Premium members spending over $100 get 20% off
-    .When(i => i.IsPremiumMember).And(i => i.Total > 100)
-    .Then(new DiscountOutput(20m))
-    
-    // Regular members spending over $100 get 10% off
-    .When(i => !i.IsPremiumMember).And(i => i.Total > 100)
-    .Then(new DiscountOutput(10m))
-    
-    // Default outcome if no rules match
-    .DefaultTo(new DiscountOutput(0m))
+var discountDecision = new Decision<CartInput, DiscountOutput>("CartDiscount");
+
+// Premium members spending over $100 get 20% off
+discountDecision.When(i => i.IsPremiumMember).And(i => i.Total > 100)
+    .Then(o => o.DiscountPercentage = 20m)
+    .Build();
+
+// Regular members spending over $100 get 10% off
+discountDecision.When(i => !i.IsPremiumMember).And(i => i.Total > 100)
+    .Then(o => o.DiscountPercentage = 10m)
     .Build();
 ```
 

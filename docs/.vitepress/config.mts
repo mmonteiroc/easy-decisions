@@ -14,7 +14,8 @@ export default defineConfig({
         text: 'Introduction',
         items: [
           { text: 'What is EasyDecisions?', link: '/guide/introduction' },
-          { text: 'Getting Started', link: '/guide/getting-started' }
+          { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Hit Policies', link: '/guide/hit-policies' }
         ]
       }
     ],

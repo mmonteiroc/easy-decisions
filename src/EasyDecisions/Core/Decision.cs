@@ -12,11 +12,23 @@ namespace EasyDecisions;
 public class Decision<TInput, TOutput> where TOutput : new()
 {
     public string Name { get; }
+    public HitPolicy HitPolicy { get; private set; } = HitPolicy.Collect;
     private readonly List<DecisionRule<TInput, TOutput>> _rules = new();
 
     public Decision(string name)
     {
         Name = name;
+    }
+
+    /// <summary>
+    /// Configures the hit policy for this decision.
+    /// </summary>
+    /// <param name="policy">The hit policy to use.</param>
+    /// <returns>The decision instance for chaining.</returns>
+    public Decision<TInput, TOutput> UsingHitPolicy(HitPolicy policy)
+    {
+        HitPolicy = policy;
+        return this;
     }
 
     /// <summary>
@@ -43,13 +55,28 @@ public class Decision<TInput, TOutput> where TOutput : new()
     public TOutput Evaluate(TInput input)
     {
         var output = new TOutput();
+        var matchingRules = new List<DecisionRule<TInput, TOutput>>();
 
         foreach (var rule in _rules)
         {
             if (rule.Matches(input))
             {
-                rule.Apply(output);
+                matchingRules.Add(rule);
+                if (HitPolicy == HitPolicy.First)
+                {
+                    break;
+                }
             }
+        }
+
+        if (HitPolicy == HitPolicy.Unique && matchingRules.Count > 1)
+        {
+            throw new InvalidOperationException($"Decision '{Name}' hit policy is 'Unique', but {matchingRules.Count} rules matched the input.");
+        }
+
+        foreach (var rule in matchingRules)
+        {
+            rule.Apply(output);
         }
 
         return output;
