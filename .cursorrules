@@ -1,0 +1,30 @@
+# AI Assistant Rules & C# Best Practices
+
+When writing, refactoring, or generating code in this repository, you must adhere to the following C# best practices and guidelines.
+
+## 1. Syntax & Style
+- **File-scoped namespaces:** Always use file-scoped namespaces (e.g., `namespace EasyDecisions;`) to reduce indentation.
+- **Implicit typing (`var`):** Use `var` when the type is explicitly apparent from the right side of the assignment (e.g., `var items = new List<string>();`). 
+- **Target-typed `new`:** Use target-typed `new` when the type is explicit on the left side (e.g., `List<string> items = new();`).
+- **String Interpolation:** Prefer string interpolation (`$"{...}"`) over `string.Format` or concatenation.
+- **Nullability:** Nullable reference types are enabled. Use `?` for nullable types and avoid null-reference exceptions. Use the null-conditional (`?.`) and null-coalescing (`??`) operators.
+
+## 2. Architecture & Design
+- **Immutability by default:** Use `readonly` fields. Use `record` types for simple models, data transfer objects, and configurations.
+- **Pattern Matching:** Leverage modern C# pattern matching (`switch` expressions, `is` patterns, property patterns) instead of long `if-else` or traditional `switch` statements.
+- **LINQ:** Prefer LINQ for data transformations and querying instead of explicit `foreach` loops, as long as readability is maintained.
+
+## 3. NuGet Package Library Specifics
+- **Access Modifiers:** Keep the public API surface as small as possible. Default to `internal` or `private` unless the member is explicitly intended for consumers of the NuGet package.
+- **XML Documentation:** ALWAYS provide `///` XML summary comments for all `public` interfaces, classes, methods, and properties. This is crucial for library consumers.
+- **Exceptions:** Throw explicit exceptions (`ArgumentNullException.ThrowIfNull(param)`, `InvalidOperationException`, etc.) and document them in the XML comments. 
+
+## 4. Asynchronous Programming
+- **Suffixes:** Name asynchronous methods with the `Async` suffix (e.g., `ExecuteAsync`).
+- **CancellationToken:** Always accept a `CancellationToken` as the last parameter in async methods and pass it down the chain.
+- **ConfigureAwait:** When writing library code, remember to use `.ConfigureAwait(false)` if you are awaiting tasks, to avoid deadlocks for consumers using synchronization contexts.
+
+## 5. Testing (xUnit)
+- **AAA Pattern:** Structure tests using the Arrange-Act-Assert pattern. Keep blocks visually separated with empty lines.
+- **Naming conventions:** Name test methods clearly, e.g., `MethodName_StateUnderTest_ExpectedBehavior`.
+- **Mocking:** Keep test dependencies lightweight.
