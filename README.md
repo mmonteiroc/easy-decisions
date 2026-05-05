@@ -2,8 +2,8 @@
   <h1>🎯 EasyDecisions</h1>
   <p><strong>A fluent, strongly-typed, DMN-like decision engine for .NET</strong></p>
 
-  [![CI](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml/badge.svg)](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml)
-  [![NuGet](https://img.shields.io/nuget/v/EasyDecisions.svg)](https://www.nuget.org/packages/EasyDecisions)
+[![main](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/EasyDecisions.svg)](https://www.nuget.org/packages/EasyDecisions)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 </div>
 
