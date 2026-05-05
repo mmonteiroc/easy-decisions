@@ -4,7 +4,6 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>EasyDecisions</PackageId>
     <Authors>mmonteiroc</Authors>
     <Description>A fluent, DMN-like decision engine for .NET.</Description>
