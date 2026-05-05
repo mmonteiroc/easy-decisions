@@ -22,6 +22,10 @@ decision.When(i => i.IsFirstPurchase).Then(o => o.Points += 20).Build();
 // If both are true, Points will be 30.
 ```
 
+> [!NOTE]
+> **Who wins in "Collect"?**
+> Since rules are applied in the order they were defined, if two matching rules modify the same variable (using `=` instead of `+=`), the **last** rule applied will effectively "win" by overwriting the previous value.
+
 ### 2. First
 
 The `First` policy returns the result of the first matching rule. Evaluation stops as soon as a match is found.
