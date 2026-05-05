@@ -116,6 +116,21 @@ Console.WriteLine($"Discount: {result.DiscountPercentage}% - {result.Reason}");
 - **Zero-Config Discovery**: Automatic assembly scanning using `DecisionFactory` & `[DecisionFabricator]`.
 - **Lightweight**: Zero external dependencies. Fast and efficient.
 
+## 🔧 Troubleshooting
+
+### Do I need to register decisions in my Dependency Injection (DI) container?
+**No.** EasyDecisions requires essentially zero setup. It uses a static `DecisionFactory` that automatically scans your loaded assemblies the very first time you call `DecisionFactory.Create()`. It finds any classes decorated with the `[DecisionFabricator]` attribute and registers them internally.
+
+### What if it says "No decision fabricator found" but I added the attribute?
+In rare cases, if your Decision Fabricators are located in a completely separate project or assembly that hasn't been executed or loaded into the `AppDomain` yet, the automatic scanner might miss it. 
+
+You can fix this by explicitly registering that assembly anywhere in your application startup (like in your `Program.cs`):
+
+```csharp
+// Register the assembly containing your custom decisions
+DecisionFactory.RegisterAssembly(typeof(MyCustomDecision).Assembly);
+```
+
 ## 🤝 Contributing
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change. 
 
