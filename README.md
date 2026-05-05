@@ -3,6 +3,7 @@
   <p><strong>A fluent, strongly-typed, DMN-like decision engine for .NET</strong></p>
 
 [![main](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mmonteiroc/easy-decisions/actions/workflows/ci.yml)
+[![SonarQube](https://github.com/mmonteiroc/easy-decisions/actions/workflows/sonar.yml/badge.svg?branch=main)](https://github.com/mmonteiroc/easy-decisions/actions/workflows/sonar.yml)
 [![NuGet](https://img.shields.io/nuget/v/EasyDecisions.svg)](https://www.nuget.org/packages/EasyDecisions)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 </div>
