@@ -21,7 +21,9 @@ Instead of writing XML, you write this:
 var decision = new Decision<MyInput, MyOutput>("Eligibility");
 
 decision.When(i => i.Age >= 18).And(i => i.Country == "US")
-    .Then(o => { o.CanDrink = true; o.CanVote = true; })
+    .Then()
+    .Set(o => o.CanDrink = true)
+    .Set(o => o.CanVote = true)
     .Build();
 ```
 

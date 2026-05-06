@@ -77,15 +77,17 @@ public class DiscountDecision : IDecisionFactory<UserContext, DiscountResult>
         // Rule 1: Young premium members
         decision.When(x => x.Age < 25)
                 .And(x => x.IsPremiumMember)
-                .Then(x => x.DiscountPercentage = 15m)
-                .And(x => x.Reason = "Youth Premium Deal")
+                .Then()
+                .Set(x => x.DiscountPercentage = 15m)
+                .Set(x => x.Reason = "Youth Premium Deal")
                 .Build();
                 
         // Rule 2: Adult premium members
         decision.When(x => x.Age >= 25)
                 .And(x => x.IsPremiumMember)
-                .Then(x => x.DiscountPercentage = 10m)
-                .And(x => x.Reason = "Standard Premium Deal")
+                .Then()
+                .Set(x => x.DiscountPercentage = 10m)
+                .Set(x => x.Reason = "Standard Premium Deal")
                 .Build();
                 
         return decision;

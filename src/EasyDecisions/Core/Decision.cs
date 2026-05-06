@@ -164,7 +164,16 @@ public class RuleBuilder<TInput, TOutput> where TOutput : new()
     public RuleActionBuilder<TInput, TOutput> Then(Action<TOutput> action)
     {
         var actionBuilder = new RuleActionBuilder<TInput, TOutput>(_decision, _rule);
-        return actionBuilder.And(action);
+        return actionBuilder.Set(action);
+    }
+
+    /// <summary>
+    /// Starts the assignment phase for the rule.
+    /// </summary>
+    /// <returns>An action builder to specify actions or complete the rule.</returns>
+    public RuleActionBuilder<TInput, TOutput> Then()
+    {
+        return new RuleActionBuilder<TInput, TOutput>(_decision, _rule);
     }
 }
 
@@ -188,6 +197,17 @@ public class RuleActionBuilder<TInput, TOutput> where TOutput : new()
     /// <param name="action">The additional action to modify the output.</param>
     /// <returns>The action builder for chaining.</returns>
     public RuleActionBuilder<TInput, TOutput> And(Action<TOutput> action)
+    {
+        _rule.AddAction(action);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets a value in the output when the rule matches.
+    /// </summary>
+    /// <param name="action">The action to modify the output.</param>
+    /// <returns>The action builder for chaining.</returns>
+    public RuleActionBuilder<TInput, TOutput> Set(Action<TOutput> action)
     {
         _rule.AddAction(action);
         return this;
