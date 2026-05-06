@@ -42,30 +42,39 @@ public class AiSelectionResult
 
 ### 3. Build the Decision Table
 
-Now, create the decision class. The rules will assign concrete implementations to the `aiApi` property.
+Now, create the decision class. The rules will assign concrete implementations to the `aiApi` property. 
+
+We use the **`HitPolicy.First`** to ensure that as soon as a matching rule is found, we stop evaluation.
 
 ```csharp
 public class AiStrategyDecision : Decision<AiRequest, AiSelectionResult>
 {
     public AiStrategyDecision()
     {
+        HitPolicy = HitPolicy.First;
+
         // OpenAI Rules
         When(i => i.PreferredVendor == "OpenAI" && i.IsPremium)
-            .Then().Set(o => o.aiApi = new OpenAI_MaxMode());
+            .Then()
+            .Set(o => o.aiApi = new OpenAI_MaxMode());
 
         When(i => i.PreferredVendor == "OpenAI" && !i.IsPremium)
-            .Then().Set(o => o.aiApi = new OpenAIService());
+            .Then()
+            .Set(o => o.aiApi = new OpenAIService());
 
         // Google Rules
         When(i => i.PreferredVendor == "Google" && i.IsPremium)
-            .Then().Set(o => o.aiApi = new GoogleAI_MaxMode());
+            .Then()
+            .Set(o => o.aiApi = new GoogleAI_MaxMode());
 
         When(i => i.PreferredVendor == "Google" && !i.IsPremium)
-            .Then().Set(o => o.aiApi = new GoogleAIService());
+            .Then()
+            .Set(o => o.aiApi = new GoogleAIService());
             
         // Codex Rules
         When(i => i.PreferredVendor == "Codex")
-            .Then().Set(o => o.aiApi = new CodexService());
+            .Then()
+            .Set(o => o.aiApi = new CodexService());
     }
 }
 ```
