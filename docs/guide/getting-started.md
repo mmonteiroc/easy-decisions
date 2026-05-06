@@ -45,19 +45,13 @@ public class DiscountDecision : Decision<CartInput, DiscountOutput>
 
 ### 3. Evaluate
 
-You can evaluate your decision by simply instantiating it:
+To evaluate your decision, use the `EasyDecision.Evaluate` helper. The input type is automatically inferred, and the result is type-safe:
 
 ```csharp
 var input = new CartInput(150, true);
-var result = new DiscountDecision().Evaluate(input);
+var result = EasyDecision.Evaluate<DiscountDecision>(input);
 
 Console.WriteLine($"Discount: {result.DiscountPercentage}%"); // Output: Discount: 20%
-```
-
-Or using the `EasyDecision` helper for a more fluent one-liner:
-
-```csharp
-var result = EasyDecision.Evaluate<DiscountDecision, CartInput, DiscountOutput>(input);
 ```
 
 With just a few lines of code, you have a fully functional, type-safe decision engine!

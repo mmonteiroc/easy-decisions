@@ -1,16 +1,15 @@
 # Instantiation & Evaluation
 
-EasyDecisions provides several ways to define, instantiate, and evaluate decisions, allowing you to choose the pattern that best fits your application's architecture.
+EasyDecisions is designed for simplicity. By keeping your business rules in dedicated classes, you gain the benefits of encapsulation and reusability.
 
-## 1. Class Derivation (Recommended)
+## 1. Define your Decision
 
-Inheriting from `Decision<TInput, TOutput>` is the most robust and type-safe way to define your business rules. It keeps the rules encapsulated within a single class.
+Inheriting from `Decision<TInput, TOutput>` is the standard way to define your business rules. 
 
-### Definition
 ```csharp
 public class PricingDecision : Decision<ProductRequest, PriceResult>
 {
-    public PricingDecision() : base("ProductPricing")
+    public PricingDecision()
     {
         HitPolicy = HitPolicy.First;
 
@@ -26,74 +25,19 @@ public class PricingDecision : Decision<ProductRequest, PriceResult>
 }
 ```
 
-### Usage
-```csharp
-var decision = new PricingDecision();
-var result = decision.Evaluate(request);
-```
+## 2. Evaluate (The "One Way")
 
----
-
-## 2. Type-Safe Helper (`EasyDecision`)
-
-The `EasyDecision` static class provides a convenient way to evaluate decisions without manually managing instances.
+To keep your code clean and consistent, EasyDecisions enforces evaluation through a single, type-safe static helper. You don't need to manually instantiate or manage the decision class.
 
 ### Evaluate One-Liner
-If your decision has a parameterless constructor (like the one above), you can evaluate it in one line:
+
+Simply call `EasyDecision.Evaluate<TDecision>(input)`. The library handles the instantiation internally, and type inference ensures the input and result are correctly typed.
 
 ```csharp
-var result = EasyDecision.Evaluate<PricingDecision, ProductRequest, PriceResult>(request);
+// The result variable is automatically typed to PriceResult
+var result = EasyDecision.Evaluate<PricingDecision>(request);
 ```
 
-### Create Instance
-You can also use it to create an instance of your decision type:
-```csharp
-var decision = EasyDecision.Create<PricingDecision>();
-```
+> [!TIP]
+> This pattern ensures that your business logic is decoupled from its execution, making your application code much cleaner and easier to read.
 
----
-
-## 3. Zero-Config Discovery (Factory Pattern)
-
-For scenarios where you want to decouple the caller from the specific decision implementation, you can use the `DecisionFactory`. This uses assembly scanning to find and register decisions automatically.
-
-### Registration
-Decorate a class with the `[Decision]` attribute and implement `IDecisionFactory<TInput, TOutput>`.
-
-```csharp
-[Decision("PREMIUM_PRICING")]
-public class PremiumPricingFactory : IDecisionFactory<ProductRequest, PriceResult>
-{
-    public Decision<ProductRequest, PriceResult> Create()
-    {
-        return new PricingDecision().UsingHitPolicy(HitPolicy.Unique);
-    }
-}
-```
-
-### Usage
-You can then retrieve the decision by its name from anywhere in your app:
-
-```csharp
-var decision = DecisionFactory.Create<ProductRequest, PriceResult>("PREMIUM_PRICING");
-var result = decision.Evaluate(request);
-```
-
-If there is only **one** factory registered for a specific input/output pair, you can even omit the name:
-
-```csharp
-var decision = DecisionFactory.Create<ProductRequest, PriceResult>();
-```
-
----
-
-## 4. Ad-hoc (Inline) Definition
-
-While not recommended for complex logic, you can define decisions inline for simple mapping or one-off logic.
-
-```csharp
-var decision = new Decision<int, string>("AgeMapper")
-    .When(age => age < 18).Then(o => o.Value = "Minor").Build();
-
-var result = decision.Evaluate(20);
-```

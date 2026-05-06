@@ -13,11 +13,16 @@ The `Collect` policy evaluates all rules in the order they were defined. Every r
 This is the default policy and is useful when multiple rules contribute to a single result (e.g., adding up points or applying multiple tags).
 
 ```csharp
-var decision = new Decision<MyInput, MyOutput>("PointsCalculation")
-    .UsingHitPolicy(HitPolicy.Collect);
-
-decision.When(i => i.IsRegistered).Then(o => o.Points += 10).Build();
-decision.When(i => i.IsFirstPurchase).Then(o => o.Points += 20).Build();
+public class PointsDecision : Decision<MyInput, MyOutput>
+{
+    public PointsDecision()
+    {
+        HitPolicy = HitPolicy.Collect;
+        
+        When(i => i.IsRegistered).Then(o => o.Points += 10).Build();
+        When(i => i.IsFirstPurchase).Then(o => o.Points += 20).Build();
+    }
+}
 
 // If both are true, Points will be 30.
 ```
@@ -33,12 +38,17 @@ The `First` policy returns the result of the first matching rule. Evaluation sto
 This is useful when rules are ordered by priority or specificity.
 
 ```csharp
-var decision = new Decision<MyInput, MyOutput>("Shipping")
-    .UsingHitPolicy(HitPolicy.First);
-
-// Specific rules first
-decision.When(i => i.Country == "US" && i.State == "AK").Then(o => o.Cost = 50).Build();
-decision.When(i => i.Country == "US").Then(o => o.Cost = 10).Build();
+public class ShippingDecision : Decision<MyInput, MyOutput>
+{
+    public ShippingDecision()
+    {
+        HitPolicy = HitPolicy.First;
+        
+        // Specific rules first
+        When(i => i.Country == "US" && i.State == "AK").Then(o => o.Cost = 50).Build();
+        When(i => i.Country == "US").Then(o => o.Cost = 10).Build();
+    }
+}
 
 // If Country is US and State is AK, Cost will be 50 and the second rule won't even be evaluated.
 ```
@@ -50,18 +60,22 @@ The `Unique` policy ensures that exactly one rule matches the input. If more tha
 This is the safest policy for mutually exclusive rules, as it prevents accidental overlaps in logic.
 
 ```csharp
-var decision = new Decision<MyInput, MyOutput>("Approval")
-    .UsingHitPolicy(HitPolicy.Unique);
-
-decision.When(i => i.Score > 80).Then(o => o.Approved = true).Build();
-decision.When(i => i.Score <= 80).Then(o => o.Approved = false).Build();
+public class ApprovalDecision : Decision<MyInput, MyOutput>
+{
+    public ApprovalDecision()
+    {
+        HitPolicy = HitPolicy.Unique;
+        
+        When(i => i.Score > 80).Then(o => o.Approved = true).Build();
+        When(i => i.Score <= 80).Then(o => o.Approved = false).Build();
+    }
+}
 
 // If a rule was added that overlaps (e.g. Score > 50), Evaluate() would throw.
 ```
 
 ## How to Set a Hit Policy
 
-### Via Derived Class (Recommended)
 Set the `HitPolicy` property in the constructor of your decision class:
 
 ```csharp
@@ -73,14 +87,6 @@ public class MyDecision : Decision<MyInput, MyOutput>
         // ...
     }
 }
-```
-
-### Via Fluent API
-You can also set it using the `.UsingHitPolicy()` method:
-
-```csharp
-var decision = new Decision<TInput, TOutput>("MyDecision")
-    .UsingHitPolicy(HitPolicy.First);
 ```
 
 If not specified, the default hit policy is `HitPolicy.Collect`.
