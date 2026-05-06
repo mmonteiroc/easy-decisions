@@ -56,6 +56,15 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
 
 If you find a bug or have a feature request, please [open an issue](https://github.com/mmonteiroc/easy-decisions/issues) on GitHub. Provide as much detail as possible, including steps to reproduce bugs or clear use cases for feature requests.
 
+### Issue Auto-Labeling
+
+To help us triage issues faster, we use an automated system that applies labels based on keywords in your issue title and description:
+- **documentation**: Triggered by "docs".
+- **bug**: Triggered by "issue" or "fix".
+- **enhancement**: Triggered by "request" or "new feature".
+
+If the automated labeling isn't accurate, don't worry! Maintainers will review and adjust labels as needed.
+
 ## Questions?
 
 If you have any questions or need help, feel free to open an issue or reach out to the maintainers.
