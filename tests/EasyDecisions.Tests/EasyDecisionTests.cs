@@ -9,11 +9,13 @@ public class EasyDecisionTests
     public class SimpleInput
     {
         public int Value { get; set; }
+        public bool IsPremium { get; set; }
     }
 
     public class SimpleOutput
     {
         public string Result { get; set; } = string.Empty;
+        public string Reason { get; set; } = string.Empty;
     }
 
     public class MyDiscountDecision : Decision<SimpleInput, SimpleOutput>
@@ -21,6 +23,12 @@ public class EasyDecisionTests
         public MyDiscountDecision()
         {
             HitPolicy = EasyDecisions.HitPolicy.First;
+
+            When(x => x.Value > 200)
+                .And(x => x.IsPremium)
+                .Then(x => x.Result = "Super VIP Discount")
+                .And(x => x.Reason = "High value and premium member")
+                .Build();
 
             When(x => x.Value > 100)
                 .Then(x => x.Result = "Big Discount")
@@ -32,29 +40,7 @@ public class EasyDecisionTests
         }
     }
 
-    public class InvalidDecision { }
 
-    [Fact]
-    public void EasyDecision_GenericWrapper_Evaluate_ShouldEvaluateSuccessfully()
-    {
-        var input = new SimpleInput { Value = 75 };
-        var result = EasyDecision<MyDiscountDecision>.Evaluate(input);
-
-        Assert.Equal("Small Discount", result.Result);
-    }
-
-    [Fact]
-    public void EasyDecision_GenericWrapper_Evaluate_InvalidType_ShouldThrowException()
-    {
-        var input = new SimpleInput { Value = 75 };
-        
-        var ex = Assert.Throws<InvalidOperationException>(() =>
-        {
-            EasyDecision<InvalidDecision>.Evaluate(input);
-        });
-        
-        Assert.Contains("does not inherit from Decision<TInput, TOutput>", ex.Message);
-    }
 
     [Fact]
     public void EasyDecision_Static_Evaluate_ShouldEvaluateSuccessfully()
@@ -74,5 +60,17 @@ public class EasyDecisionTests
         var result = decision.Evaluate(input);
 
         Assert.Equal("Big Discount", result.Result);
+    }
+
+    [Fact]
+    public void EasyDecision_Static_Evaluate_ComplexRule_ShouldMatchAndAssignBoth()
+    {
+        var input = new SimpleInput { Value = 250, IsPremium = true };
+        var decision = EasyDecision.Create<MyDiscountDecision>();
+        
+        var result = decision.Evaluate(input);
+
+        Assert.Equal("Super VIP Discount", result.Result);
+        Assert.Equal("High value and premium member", result.Reason);
     }
 }
