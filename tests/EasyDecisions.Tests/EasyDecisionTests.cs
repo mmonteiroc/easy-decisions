@@ -24,17 +24,17 @@ public class EasyDecisionTests
 
             When(x => x.Value > 200)
                 .And(x => x.IsPremium)
-                .Then(x => x.Result = "Super VIP Discount")
-                .And(x => x.Reason = "High value and premium member")
-                .Build();
+                .Then()
+                .Set(x => x.Result = "Super VIP Discount")
+                .Set(x => x.Reason = "High value and premium member");
 
             When(x => x.Value > 100)
-                .Then(x => x.Result = "Big Discount")
-                .Build();
+                .Then()
+                .Set(x => x.Result = "Big Discount");
 
             When(x => x.Value > 50)
-                .Then(x => x.Result = "Small Discount")
-                .Build();
+                .Then()
+                .Set(x => x.Result = "Small Discount");
         }
     }
 

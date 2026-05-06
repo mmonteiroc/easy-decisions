@@ -62,7 +62,10 @@ public class Decision<TInput, TOutput> : IDecision where TOutput : new()
 
     internal void AddRule(DecisionRule<TInput, TOutput> rule)
     {
-        _rules.Add(rule);
+        if (!_rules.Contains(rule))
+        {
+            _rules.Add(rule);
+        }
     }
 
     /// <summary>
@@ -164,6 +167,7 @@ public class RuleBuilder<TInput, TOutput> where TOutput : new()
     internal RuleBuilder(Decision<TInput, TOutput> decision)
     {
         _decision = decision;
+        _decision.AddRule(_rule);
     }
 
     /// <summary>
@@ -182,6 +186,7 @@ public class RuleBuilder<TInput, TOutput> where TOutput : new()
     /// </summary>
     /// <param name="action">The action to modify the output.</param>
     /// <returns>An action builder to chain further actions or complete the rule.</returns>
+    [Obsolete("Use Then().Set(action) instead for better readability.")]
     public RuleActionBuilder<TInput, TOutput> Then(Action<TOutput> action)
     {
         var actionBuilder = new RuleActionBuilder<TInput, TOutput>(_decision, _rule);
@@ -217,6 +222,7 @@ public class RuleActionBuilder<TInput, TOutput> where TOutput : new()
     /// </summary>
     /// <param name="action">The additional action to modify the output.</param>
     /// <returns>The action builder for chaining.</returns>
+    [Obsolete("Use Set(action) instead for better readability.")]
     public RuleActionBuilder<TInput, TOutput> And(Action<TOutput> action)
     {
         _rule.AddAction(action);
@@ -236,7 +242,9 @@ public class RuleActionBuilder<TInput, TOutput> where TOutput : new()
 
     /// <summary>
     /// Finalizes the rule and registers it with the decision table.
+    /// Rules are now automatically registered, so this call is optional.
     /// </summary>
+    [Obsolete("Rules are now automatically registered. This call is no longer necessary.")]
     public void Build()
     {
         _decision.AddRule(_rule);

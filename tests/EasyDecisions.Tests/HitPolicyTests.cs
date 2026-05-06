@@ -19,8 +19,8 @@ public class HitPolicyTests
         public FirstPolicyDecision()
         {
             UsingHitPolicy(HitPolicy.First);
-            When(x => x.Count > 5).Then(x => x.A = "First").Build();
-            When(x => x.Count > 0).Then(x => x.A = "Second").Build();
+            When(x => x.Count > 5).Then().Set(x => x.A = "First");
+            When(x => x.Count > 0).Then().Set(x => x.A = "Second");
         }
     }
 
@@ -36,7 +36,7 @@ public class HitPolicyTests
         public UniquePolicyDecision()
         {
             UsingHitPolicy(HitPolicy.Unique);
-            When(x => x.Count > 5).Then(x => x.A = "Unique").Build();
+            When(x => x.Count > 5).Then().Set(x => x.A = "Unique");
         }
     }
 
@@ -52,8 +52,8 @@ public class HitPolicyTests
         public UniquePolicyErrorDecision()
         {
             UsingHitPolicy(HitPolicy.Unique);
-            When(x => x.Count > 5).Then(x => x.A = "Match 1").Build();
-            When(x => x.Count > 0).Then(x => x.A = "Match 2").Build();
+            When(x => x.Count > 5).Then().Set(x => x.A = "Match 1");
+            When(x => x.Count > 0).Then().Set(x => x.A = "Match 2");
         }
     }
 
@@ -71,7 +71,7 @@ public class HitPolicyTests
         public UniquePolicyNoneDecision()
         {
             UsingHitPolicy(HitPolicy.Unique);
-            When(x => x.Count > 100).Then(x => x.A = "None").Build();
+            When(x => x.Count > 100).Then().Set(x => x.A = "None");
         }
     }
 
@@ -87,8 +87,8 @@ public class HitPolicyTests
         public CollectPolicyDecision()
         {
             UsingHitPolicy(HitPolicy.Collect);
-            When(x => x.Count > 5).Then(x => x.A = "First").Build();
-            When(x => x.Count > 0).Then(x => x.B = "Second").Build();
+            When(x => x.Count > 5).Then().Set(x => x.A = "First");
+            When(x => x.Count > 0).Then().Set(x => x.B = "Second");
         }
     }
 

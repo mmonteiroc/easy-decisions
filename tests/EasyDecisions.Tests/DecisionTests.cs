@@ -41,15 +41,15 @@ public class DecisionTests
         {
             When(x => x.IsValid)
              .And(x => x.Count > 5)
-             .Then(x => x.A = "hello")
-             .And(x => x.B = "bye")
-             .Build();
+             .Then()
+             .Set(x => x.A = "hello")
+             .Set(x => x.B = "bye");
 
             When(x => x.IsValid)
              .And(x => x.Count <= 5)
-             .Then(x => x.A = "hi")
-             .And(x => x.B = "see ya")
-             .Build();
+             .Then()
+             .Set(x => x.A = "hi")
+             .Set(x => x.B = "see ya");
         }
     }
 
@@ -69,9 +69,9 @@ public class DecisionTests
         {
             When(x => x.IsValid)
              .And(x => x.Count > 5)
-             .Then(x => x.A = "hello")
-             .And(x => x.B = "bye")
-             .Build();
+             .Then()
+             .Set(x => x.A = "hello")
+             .Set(x => x.B = "bye");
         }
     }
 
@@ -90,17 +90,17 @@ public class DecisionTests
         public MultipleMatchingDecision()
         {
             When(x => x.IsValid)
-             .Then(x => x.TotalScore += 10)
-             .Build();
+             .Then()
+             .Set(x => x.TotalScore += 10);
 
             When(x => x.Count > 5)
-             .Then(x => x.TotalScore += 20)
-             .And(x => x.IsApproved = true)
-             .Build();
+             .Then()
+             .Set(x => x.TotalScore += 20)
+             .Set(x => x.IsApproved = true);
 
             When(x => x.Category == "VIP")
-             .Then(x => x.TotalScore *= 2)
-             .Build();
+             .Then()
+             .Set(x => x.TotalScore *= 2);
         }
     }
 
@@ -118,7 +118,7 @@ public class DecisionTests
     {
         public DefaultRuleDecision()
         {
-            When(x => true).Then(x => x.A = "Default").Build();
+            When(x => true).Then().Set(x => x.A = "Default");
         }
     }
 
@@ -136,22 +136,22 @@ public class DecisionTests
             When(x => x.IsValid)
              .And(x => x.Amount > 1000)
              .And(x => x.Category == "Premium")
-             .Then(x => x.Discount = 0.20)
-             .And(x => x.IsApproved = true)
-             .Build();
+             .Then()
+             .Set(x => x.Discount = 0.20)
+             .Set(x => x.IsApproved = true);
 
             When(x => x.IsValid)
              .And(x => x.Amount > 500)
              .And(x => x.Amount <= 1000)
              .And(x => x.Category == "Standard")
-             .Then(x => x.Discount = 0.10)
-             .And(x => x.IsApproved = true)
-             .Build();
+             .Then()
+             .Set(x => x.Discount = 0.10)
+             .Set(x => x.IsApproved = true);
 
             When(x => !x.IsValid)
-             .Then(x => x.IsApproved = false)
-             .And(x => x.TotalScore = -100)
-             .Build();
+             .Then()
+             .Set(x => x.IsApproved = false)
+             .Set(x => x.TotalScore = -100);
         }
     }
 

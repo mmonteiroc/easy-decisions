@@ -13,13 +13,11 @@ public class AssignmentApiTests
              .And(x => x.IsValid)
              .Then()
              .Set(x => x.A = "Greater than 10")
-             .Set(x => x.TotalScore = 100)
-             .Build();
+             .Set(x => x.TotalScore = 100);
 
             When(x => x.Count <= 10)
              .Then()
-             .Set(x => x.A = "Less or equal 10")
-             .Build();
+             .Set(x => x.A = "Less or equal 10");
         }
     }
 
@@ -41,10 +39,10 @@ public class AssignmentApiTests
         public MixedApiDecision()
         {
             When(x => x.IsValid)
-             .Then(x => x.A = "Valid")
+             .Then()
+             .Set(x => x.A = "Valid")
              .Set(x => x.TotalScore = 50)
-             .And(x => x.B = "Mixed")
-             .Build();
+             .Set(x => x.B = "Mixed");
         }
     }
 
