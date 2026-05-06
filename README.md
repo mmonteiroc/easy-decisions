@@ -25,6 +25,7 @@ You should use EasyDecisions whenever you find yourself writing:
 - Pricing engines, discount calculators, or risk assessments.
 - State machines or status color mappers.
 - "Spaghetti code" of massive `switch` statements or nested `if/else if` blocks.
+- When you need to **reuse the same decision** (one input generates one output) in multiple places, avoiding the need to duplicate complex conditions or extract them into boilerplate dependency classes.
 
 **If you can imagine your business rule as a spreadsheet table (DMN), you should be using EasyDecisions.**
 
