@@ -19,8 +19,8 @@ public class PointsDecision : Decision<MyInput, MyOutput>
     {
         HitPolicy = HitPolicy.Collect;
         
-        When(i => i.IsRegistered).Then(o => o.Points += 10).Build();
-        When(i => i.IsFirstPurchase).Then(o => o.Points += 20).Build();
+        When(i => i.IsRegistered).Then().Set(o => o.Points += 10);
+        When(i => i.IsFirstPurchase).Then().Set(o => o.Points += 20);
     }
 }
 
@@ -45,8 +45,8 @@ public class ShippingDecision : Decision<MyInput, MyOutput>
         HitPolicy = HitPolicy.First;
         
         // Specific rules first
-        When(i => i.Country == "US" && i.State == "AK").Then(o => o.Cost = 50).Build();
-        When(i => i.Country == "US").Then(o => o.Cost = 10).Build();
+        When(i => i.Country == "US" && i.State == "AK").Then().Set(o => o.Cost = 50);
+        When(i => i.Country == "US").Then().Set(o => o.Cost = 10);
     }
 }
 
@@ -66,8 +66,8 @@ public class ApprovalDecision : Decision<MyInput, MyOutput>
     {
         HitPolicy = HitPolicy.Unique;
         
-        When(i => i.Score > 80).Then(o => o.Approved = true).Build();
-        When(i => i.Score <= 80).Then(o => o.Approved = false).Build();
+        When(i => i.Score > 80).Then().Set(o => o.Approved = true);
+        When(i => i.Score <= 80).Then().Set(o => o.Approved = false);
     }
 }
 

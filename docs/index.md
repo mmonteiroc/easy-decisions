@@ -17,7 +17,7 @@ features:
   - title: 100% Strongly Typed
     details: Catch errors at compile-time instead of runtime. Leverage full IDE support like IntelliSense and refactoring tools.
   - title: Fluent API
-    details: Build complex logic trees effortlessly using intuitive `When()`, `And()`, and `Then()` method chaining.
+    details: Build complex logic trees effortlessly using intuitive `When()`, `And()`, `Then()`, and `Set()` method chaining.
   - title: Pure Code
     details: Say goodbye to messy external XML files (DMN). Your business rules live directly alongside your domain logic.
 ---

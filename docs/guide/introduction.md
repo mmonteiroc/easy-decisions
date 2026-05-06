@@ -23,11 +23,9 @@ public class EligibilityDecision : Decision<MyInput, MyOutput>
     public EligibilityDecision() : base("Eligibility")
     {
         When(i => i.Age >= 18 && i.Country == "US")
-            .Then(o => {
-                o.CanDrink = true;
-                o.CanVote = true;
-            })
-            .Build();
+            .Then()
+            .Set(o => o.CanDrink = true)
+            .Set(o => o.CanVote = true);
     }
 }
 ```

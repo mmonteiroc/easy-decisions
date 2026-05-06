@@ -32,13 +32,13 @@ public class DiscountDecision : Decision<CartInput, DiscountOutput>
     {
         // Premium members spending over $100 get 20% off
         When(i => i.IsPremiumMember && i.Total > 100)
-            .Then(o => o.DiscountPercentage = 20m)
-            .Build();
+            .Then()
+            .Set(o => o.DiscountPercentage = 20m);
 
         // Regular members spending over $100 get 10% off
         When(i => !i.IsPremiumMember && i.Total > 100)
-            .Then(o => o.DiscountPercentage = 10m)
-            .Build();
+            .Then()
+            .Set(o => o.DiscountPercentage = 10m);
     }
 }
 ```

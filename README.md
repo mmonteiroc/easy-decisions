@@ -52,7 +52,7 @@ public class DiscountResult { public decimal Percentage { get; set; } }
 ```
 
 ### 2. Define your Decision
-The recommended way is to inherit from `Decision<TInput, TOutput>`. This keeps your logic encapsulated and reusable.
+The recommended way is to inherit from `Decision<TInput, TOutput>`. This keeps your logic encapsulated and reusable. Rules are automatically registered, so no need for a final `.Build()` call.
 
 ```csharp
 public class DiscountDecision : Decision<UserContext, DiscountResult>
@@ -61,13 +61,19 @@ public class DiscountDecision : Decision<UserContext, DiscountResult>
     {
         HitPolicy = HitPolicy.First;
 
+        // You can define multiple rows (rules) in your decision table
         When(x => x.Age < 25 && x.IsPremiumMember)
-            .Then(x => x.Percentage = 15m)
-            .Build();
+            .Then()
+            .Set(x => x.Percentage = 15m);
 
         When(x => x.IsPremiumMember)
-            .Then(x => x.Percentage = 10m)
-            .Build();
+            .Then()
+            .Set(x => x.Percentage = 10m);
+            
+        // Default rule if nothing else matches
+        When(_ => true)
+            .Then()
+            .Set(x => x.Percentage = 0m);
     }
 }
 ```

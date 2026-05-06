@@ -14,13 +14,13 @@ public class PricingDecision : Decision<ProductRequest, PriceResult>
         HitPolicy = HitPolicy.First;
 
         When(p => p.Category == "Electronics")
-            .Then(r => r.Price = p.BasePrice * 0.9m)
-            .Build();
+            .Then()
+            .Set(r => r.Price = p.BasePrice * 0.9m);
 
         // Default rule
         When(_ => true)
-            .Then(r => r.Price = p.BasePrice)
-            .Build();
+            .Then()
+            .Set(r => r.Price = p.BasePrice);
     }
 }
 ```
