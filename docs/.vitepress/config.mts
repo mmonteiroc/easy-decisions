@@ -23,6 +23,10 @@ export default defineConfig({
     ],
     socialLinks: [
       { icon: 'github', link: 'https://github.com/mmonteiroc/easy-decisions' }
-    ]
+    ],
+    footer: {
+      message: 'Made with ❤️ in Switzerland | ![GitHub Repo stars](https://img.shields.io/github/stars/mmonteiroc/easy-decisions)',
+      copyright: 'Copyright © 2026-present mmonteiroc'
+    }
   }
 })
