@@ -19,6 +19,12 @@ export default defineConfig({
           { text: 'Hit Policies', link: '/guide/hit-policies' },
           { text: 'FEEL-like Helpers', link: '/guide/feel-helpers' }
         ]
+      },
+      {
+        text: 'Use Cases',
+        items: [
+          { text: 'Strategy Selector', link: '/use-cases/strategy-selector' }
+        ]
       }
     ],
     socialLinks: [
