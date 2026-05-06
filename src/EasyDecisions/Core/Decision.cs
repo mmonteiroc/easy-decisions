@@ -42,7 +42,7 @@ public class Decision<TInput, TOutput> : IDecision where TOutput : new()
     /// </summary>
     /// <param name="policy">The hit policy to use.</param>
     /// <returns>The decision instance for chaining.</returns>
-    public Decision<TInput, TOutput> UsingHitPolicy(HitPolicy policy)
+    protected Decision<TInput, TOutput> UsingHitPolicy(HitPolicy policy)
     {
         HitPolicy = policy;
         return this;
@@ -55,7 +55,7 @@ public class Decision<TInput, TOutput> : IDecision where TOutput : new()
     /// </summary>
     /// <param name="predicate">The condition that must be met for this rule to apply.</param>
     /// <returns>A rule builder to chain further conditions or actions.</returns>
-    public RuleBuilder<TInput, TOutput> When(Func<TInput, bool> predicate)
+    protected RuleBuilder<TInput, TOutput> When(Func<TInput, bool> predicate)
     {
         return new RuleBuilder<TInput, TOutput>(this).And(predicate);
     }

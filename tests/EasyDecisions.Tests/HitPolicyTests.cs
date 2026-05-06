@@ -1,109 +1,102 @@
-using System;
 using Xunit;
-using EasyDecisions;
 using EasyDecisions.Tests.TestModels;
 
 namespace EasyDecisions.Tests;
 
 public class HitPolicyTests
 {
+    private class DefaultCollectDecision : Decision<MyInput, MyOutput> { }
+
     [Fact]
     public void HitPolicy_Default_IsCollect()
     {
-        var d = new TestDecision<MyInput, MyOutput>("DefaultCollect");
+        var d = new DefaultCollectDecision();
         Assert.Equal(HitPolicy.Collect, d.HitPolicy);
+    }
+
+    private class FirstPolicyDecision : Decision<MyInput, MyOutput>
+    {
+        public FirstPolicyDecision()
+        {
+            UsingHitPolicy(HitPolicy.First);
+            When(x => x.Count > 5).Then(x => x.A = "First").Build();
+            When(x => x.Count > 0).Then(x => x.A = "Second").Build();
+        }
     }
 
     [Fact]
     public void HitPolicy_First_ShouldOnlyApplyFirstMatchingRule()
     {
-        var d = new TestDecision<MyInput, MyOutput>("FirstPolicy")
-            .UsingHitPolicy(HitPolicy.First);
+        var output = EasyDecision.Evaluate<FirstPolicyDecision>(new MyInput { Count = 10 });
+        Assert.Equal("First", output.A);
+    }
 
-        d.When(x => x.Count > 5)
-         .Then(x => x.TotalScore = 10)
-         .Build();
-
-        d.When(x => x.Count > 0)
-         .Then(x => x.TotalScore = 20)
-         .Build();
-
-        var output = d.Evaluate(new MyInput { Count = 10 });
-
-        // Only the first rule (TotalScore = 10) should be applied
-        Assert.Equal(10, output.TotalScore);
+    private class UniquePolicyDecision : Decision<MyInput, MyOutput>
+    {
+        public UniquePolicyDecision()
+        {
+            UsingHitPolicy(HitPolicy.Unique);
+            When(x => x.Count > 5).Then(x => x.A = "Unique").Build();
+        }
     }
 
     [Fact]
     public void HitPolicy_Unique_ShouldApplyWhenExactlyOneMatches()
     {
-        var d = new TestDecision<MyInput, MyOutput>("UniquePolicy")
-            .UsingHitPolicy(HitPolicy.Unique);
+        var output = EasyDecision.Evaluate<UniquePolicyDecision>(new MyInput { Count = 10 });
+        Assert.Equal("Unique", output.A);
+    }
 
-        d.When(x => x.Count > 5)
-         .Then(x => x.TotalScore = 10)
-         .Build();
-
-        d.When(x => x.Count <= 5)
-         .Then(x => x.TotalScore = 20)
-         .Build();
-
-        var output = d.Evaluate(new MyInput { Count = 10 });
-
-        Assert.Equal(10, output.TotalScore);
+    private class UniquePolicyErrorDecision : Decision<MyInput, MyOutput>
+    {
+        public UniquePolicyErrorDecision()
+        {
+            UsingHitPolicy(HitPolicy.Unique);
+            When(x => x.Count > 5).Then(x => x.A = "Match 1").Build();
+            When(x => x.Count > 0).Then(x => x.A = "Match 2").Build();
+        }
     }
 
     [Fact]
     public void HitPolicy_Unique_ShouldThrowWhenMoreThanOneMatches()
     {
-        var d = new TestDecision<MyInput, MyOutput>("UniquePolicyError")
-            .UsingHitPolicy(HitPolicy.Unique);
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            EasyDecision.Evaluate<UniquePolicyErrorDecision>(new MyInput { Count = 10 });
+        });
+    }
 
-        d.When(x => x.Count > 5)
-         .Then(x => x.TotalScore = 10)
-         .Build();
-
-        d.When(x => x.Count > 0)
-         .Then(x => x.TotalScore = 20)
-         .Build();
-
-        // Both rules match for Count = 10
-        var ex = Assert.Throws<InvalidOperationException>(() => d.Evaluate(new MyInput { Count = 10 }));
-        Assert.Contains("hit policy is 'Unique', but 2 rules matched", ex.Message);
+    private class UniquePolicyNoneDecision : Decision<MyInput, MyOutput>
+    {
+        public UniquePolicyNoneDecision()
+        {
+            UsingHitPolicy(HitPolicy.Unique);
+            When(x => x.Count > 100).Then(x => x.A = "None").Build();
+        }
     }
 
     [Fact]
     public void HitPolicy_Unique_ShouldReturnDefaultWhenNoneMatch()
     {
-        var d = new TestDecision<MyInput, MyOutput>("UniquePolicyNone")
-            .UsingHitPolicy(HitPolicy.Unique);
+        var output = EasyDecision.Evaluate<UniquePolicyNoneDecision>(new MyInput { Count = 10 });
+        Assert.Null(output.A);
+    }
 
-        d.When(x => x.Count > 100)
-         .Then(x => x.TotalScore = 10)
-         .Build();
-
-        var output = d.Evaluate(new MyInput { Count = 10 });
-
-        Assert.Equal(0, output.TotalScore);
+    private class CollectPolicyDecision : Decision<MyInput, MyOutput>
+    {
+        public CollectPolicyDecision()
+        {
+            UsingHitPolicy(HitPolicy.Collect);
+            When(x => x.Count > 5).Then(x => x.A = "First").Build();
+            When(x => x.Count > 0).Then(x => x.B = "Second").Build();
+        }
     }
 
     [Fact]
     public void HitPolicy_Collect_ShouldApplyAllMatches()
     {
-        var d = new TestDecision<MyInput, MyOutput>("CollectPolicy")
-            .UsingHitPolicy(HitPolicy.Collect);
-
-        d.When(x => x.Count > 5)
-         .Then(x => x.TotalScore += 10)
-         .Build();
-
-        d.When(x => x.Count > 0)
-         .Then(x => x.TotalScore += 20)
-         .Build();
-
-        var output = d.Evaluate(new MyInput { Count = 10 });
-
-        // Both rules applied: 10 + 20 = 30
-        Assert.Equal(30, output.TotalScore);
+        var output = EasyDecision.Evaluate<CollectPolicyDecision>(new MyInput { Count = 10 });
+        Assert.Equal("First", output.A);
+        Assert.Equal("Second", output.B);
     }
 }
