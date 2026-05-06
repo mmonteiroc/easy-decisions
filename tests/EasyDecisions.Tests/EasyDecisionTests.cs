@@ -35,32 +35,32 @@ public class EasyDecisionTests
     public class InvalidDecision { }
 
     [Fact]
-    public void EasyDecision_GenericWrapper_Of_ShouldEvaluateSuccessfully()
+    public void EasyDecision_GenericWrapper_Evaluate_ShouldEvaluateSuccessfully()
     {
         var input = new SimpleInput { Value = 75 };
-        var result = EasyDecision<MyDiscountDecision>.Of(input);
+        var result = EasyDecision<MyDiscountDecision>.Evaluate(input);
 
         Assert.Equal("Small Discount", result.Result);
     }
 
     [Fact]
-    public void EasyDecision_GenericWrapper_Of_InvalidType_ShouldThrowException()
+    public void EasyDecision_GenericWrapper_Evaluate_InvalidType_ShouldThrowException()
     {
         var input = new SimpleInput { Value = 75 };
         
         var ex = Assert.Throws<InvalidOperationException>(() =>
         {
-            EasyDecision<InvalidDecision>.Of(input);
+            EasyDecision<InvalidDecision>.Evaluate(input);
         });
         
         Assert.Contains("does not inherit from Decision<TInput, TOutput>", ex.Message);
     }
 
     [Fact]
-    public void EasyDecision_Static_Of_ShouldEvaluateSuccessfully()
+    public void EasyDecision_Static_Evaluate_ShouldEvaluateSuccessfully()
     {
         var input = new SimpleInput { Value = 150 };
-        var result = EasyDecision.Of<MyDiscountDecision, SimpleInput, SimpleOutput>(input);
+        var result = EasyDecision.Evaluate<MyDiscountDecision, SimpleInput, SimpleOutput>(input);
 
         Assert.Equal("Big Discount", result.Result);
     }

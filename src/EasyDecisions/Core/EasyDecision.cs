@@ -19,7 +19,7 @@ public static class EasyDecision<TDecision> where TDecision : class, new()
     /// <param name="input">The input to the decision.</param>
     /// <returns>The result of the decision evaluation.</returns>
     /// <exception cref="InvalidOperationException">Thrown if the decision class does not inherit from Decision&lt;TInput, TOutput&gt;.</exception>
-    public static dynamic Of(dynamic input)
+    public static dynamic Evaluate(dynamic input)
     {
         var type = typeof(TDecision);
         var baseType = type.BaseType;
@@ -49,7 +49,7 @@ public static class EasyDecision
     /// <summary>
     /// Evaluates the decision in a fully type-safe manner.
     /// </summary>
-    public static TOutput Of<TDecision, TInput, TOutput>(TInput input) 
+    public static TOutput Evaluate<TDecision, TInput, TOutput>(TInput input) 
         where TDecision : Decision<TInput, TOutput>, new()
         where TOutput : new()
     {
