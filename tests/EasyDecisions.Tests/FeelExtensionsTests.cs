@@ -88,6 +88,24 @@ public class FeelExtensionsTests
         Assert.Equal(expected, value.IsAtMost(max));
     }
 
+    [Theory]
+    [InlineData(19, 18, true)]
+    [InlineData(18, 18, false)]
+    [InlineData(17, 18, false)]
+    public void IsGreaterThan_ReturnsExpected(int value, int min, bool expected)
+    {
+        Assert.Equal(expected, value.IsGreaterThan(min));
+    }
+
+    [Theory]
+    [InlineData(64, 65, true)]
+    [InlineData(65, 65, false)]
+    [InlineData(66, 65, false)]
+    public void IsLessThan_ReturnsExpected(int value, int max, bool expected)
+    {
+        Assert.Equal(expected, value.IsLessThan(max));
+    }
+
     [Fact]
     public void IsBetween_DateTime_ReturnsExpected()
     {

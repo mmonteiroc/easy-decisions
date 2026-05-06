@@ -94,4 +94,22 @@ public static class FeelExtensions
     {
         return value.CompareTo(max) <= 0;
     }
+
+    /// <summary>
+    /// Checks if the value is strictly greater than min.
+    /// Equivalent to > min in FEEL.
+    /// </summary>
+    public static bool IsGreaterThan<T>(this T value, T min) where T : IComparable<T>
+    {
+        return value.CompareTo(min) > 0;
+    }
+
+    /// <summary>
+    /// Checks if the value is strictly less than max.
+    /// Equivalent to < max in FEEL.
+    /// </summary>
+    public static bool IsLessThan<T>(this T value, T max) where T : IComparable<T>
+    {
+        return value.CompareTo(max) < 0;
+    }
 }

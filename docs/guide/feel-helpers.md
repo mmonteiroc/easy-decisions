@@ -35,6 +35,8 @@ using EasyDecisions.Extensions;
 | `IsBetween(min, max, incMin, incMax)` | Mixed | Configurable inclusivity (e.g., `[min..max)`). |
 | `IsAtLeast(min)` | `>= min` | Greater than or equal to. |
 | `IsAtMost(max)` | `<= max` | Less than or equal to. |
+| `IsGreaterThan(min)` | `> min` | Strictly greater than. |
+| `IsLessThan(max)` | `< max` | Strictly less than. |
 
 #### Examples
 
