@@ -1,7 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("EasyDecisions.Tests")]
 
 namespace EasyDecisions;
+
+/// <summary>
+/// A non-generic interface for a decision.
+/// </summary>
+public interface IDecision
+{
+    string Name { get; }
+    object Evaluate(object input);
+}
 
 /// <summary>
 /// Represents a decision table, similar to a DMN (Decision Model and Notation) file.
@@ -9,7 +21,7 @@ namespace EasyDecisions;
 /// </summary>
 /// <typeparam name="TInput">The type of the input data.</typeparam>
 /// <typeparam name="TOutput">The type of the output data, which must have a parameterless constructor.</typeparam>
-public class Decision<TInput, TOutput> where TOutput : new()
+public class Decision<TInput, TOutput> : IDecision where TOutput : new()
 {
     public string Name { get; }
     public HitPolicy HitPolicy { get; protected set; } = HitPolicy.Collect;
@@ -59,7 +71,7 @@ public class Decision<TInput, TOutput> where TOutput : new()
     /// </summary>
     /// <param name="input">The input data to evaluate.</param>
     /// <returns>The resulting output after applying all matching rules.</returns>
-    public TOutput Evaluate(TInput input)
+    internal TOutput Evaluate(TInput input)
     {
         var output = new TOutput();
         var matchingRules = new List<DecisionRule<TInput, TOutput>>();
@@ -87,6 +99,15 @@ public class Decision<TInput, TOutput> where TOutput : new()
         }
 
         return output;
+    }
+
+    object IDecision.Evaluate(object input)
+    {
+        if (input is TInput typedInput)
+        {
+            return Evaluate(typedInput);
+        }
+        throw new ArgumentException($"Input must be of type {typeof(TInput).FullName}", nameof(input));
     }
 }
 

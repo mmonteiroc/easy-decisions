@@ -11,20 +11,20 @@ namespace EasyDecisions;
 public static class EasyDecision
 {
     /// <summary>
-    /// Evaluates the decision in a fully type-safe manner.
+    /// Evaluates the decision by only specifying the decision class.
+    /// The input type is inferred, and the output type is determined at runtime (dynamic).
     /// </summary>
-    public static TOutput Evaluate<TDecision, TInput, TOutput>(TInput input) 
-        where TDecision : Decision<TInput, TOutput>, new()
-        where TOutput : new()
+    /// <typeparam name="TDecision">The decision class to evaluate.</typeparam>
+    /// <param name="input">The input data.</param>
+    /// <returns>The result of the decision evaluation.</returns>
+    public static dynamic Evaluate<TDecision>(object input) where TDecision : new()
     {
-        return new TDecision().Evaluate(input);
-    }
+        var instance = new TDecision();
+        if (instance is IDecision decision)
+        {
+            return decision.Evaluate(input);
+        }
 
-    /// <summary>
-    /// Instantiates a decision so that it can be evaluated directly.
-    /// </summary>
-    public static TDecision Create<TDecision>() where TDecision : class, new()
-    {
-        return new TDecision();
+        throw new InvalidOperationException($"Type {typeof(TDecision).Name} does not implement IDecision. Ensure it inherits from Decision<TInput, TOutput>.");
     }
 }

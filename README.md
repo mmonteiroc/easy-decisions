@@ -73,32 +73,11 @@ public class DiscountDecision : Decision<UserContext, DiscountResult>
 ```
 
 ### 3. Evaluate
-You can evaluate decisions directly, using a helper, or via a factory.
-
-#### A. Direct Evaluation (Recommended)
-```csharp
-var result = new DiscountDecision().Evaluate(userContext);
-```
-
-#### B. Type-Safe Helper (`EasyDecision`)
-Perfect for one-liners where you don't want to manually instantiate the decision class.
-```csharp
-var result = EasyDecision.Evaluate<DiscountDecision, UserContext, DiscountResult>(userContext);
-```
-
-#### C. Factory Discovery (Zero-Config)
-If you prefer decoupling your instantiation logic, use the `DecisionFactory`. Register your decision with an attribute and implement `IDecisionFactory`.
+The **only** way to evaluate a decision is through the `EasyDecision.Evaluate` helper. It finds and evaluates your decision in a single, type-safe line.
 
 ```csharp
-[Decision("DISCOUNT_CALC")]
-public class DiscountFactory : IDecisionFactory<UserContext, DiscountResult>
-{
-    public Decision<UserContext, DiscountResult> Create() => new DiscountDecision();
-}
-
-// Later in your code...
-var decision = DecisionFactory.Create<UserContext, DiscountResult>("DISCOUNT_CALC");
-var result = decision.Evaluate(userContext);
+// The input type is inferred, and the result is type-safe
+var result = EasyDecision.Evaluate<DiscountDecision>(userContext);
 ```
 
 

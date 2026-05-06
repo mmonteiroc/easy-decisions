@@ -1,6 +1,4 @@
-using System;
 using Xunit;
-using EasyDecisions.Exceptions;
 
 namespace EasyDecisions.Tests;
 
@@ -43,32 +41,19 @@ public class EasyDecisionTests
 
 
     [Fact]
-    public void EasyDecision_Static_Evaluate_ShouldEvaluateSuccessfully()
+    public void EasyDecision_Evaluate_ShouldEvaluateSuccessfully()
     {
         var input = new SimpleInput { Value = 150 };
-        var result = EasyDecision.Evaluate<MyDiscountDecision, SimpleInput, SimpleOutput>(input);
+        var result = EasyDecision.Evaluate<MyDiscountDecision>(input);
 
         Assert.Equal("Big Discount", result.Result);
     }
 
     [Fact]
-    public void EasyDecision_Static_Create_ShouldInstantiateAndEvaluateSuccessfully()
-    {
-        var input = new SimpleInput { Value = 150 };
-        var decision = EasyDecision.Create<MyDiscountDecision>();
-        
-        var result = decision.Evaluate(input);
-
-        Assert.Equal("Big Discount", result.Result);
-    }
-
-    [Fact]
-    public void EasyDecision_Static_Evaluate_ComplexRule_ShouldMatchAndAssignBoth()
+    public void EasyDecision_Evaluate_ComplexRule_ShouldMatchAndAssignBoth()
     {
         var input = new SimpleInput { Value = 250, IsPremium = true };
-        var decision = EasyDecision.Create<MyDiscountDecision>();
-        
-        var result = decision.Evaluate(input);
+        var result = EasyDecision.Evaluate<MyDiscountDecision>(input);
 
         Assert.Equal("Super VIP Discount", result.Result);
         Assert.Equal("High value and premium member", result.Reason);
