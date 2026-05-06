@@ -111,6 +111,31 @@ Console.WriteLine($"Discount: {result.DiscountPercentage}% - {result.Reason}");
 // Output: Discount: 15% - Youth Premium Deal
 ```
 
+## 🚦 Hit Policies
+
+EasyDecisions supports common DMN hit policies to control how multiple matching rules are handled. You can set the policy using `.UsingHitPolicy(HitPolicy.Name)`.
+
+### 1. Collect (Default)
+Evaluates **all** rules. Every matching rule is applied to the output object in the order they were defined.
+```csharp
+decision.UsingHitPolicy(HitPolicy.Collect);
+// If Rule A and Rule B match, both are applied.
+```
+
+### 2. First
+Returns the result of the **first** matching rule only. Evaluation stops immediately after a match is found.
+```csharp
+decision.UsingHitPolicy(HitPolicy.First);
+// Useful for priority-based rules (e.g., specific case before general case).
+```
+
+### 3. Unique
+Ensures that **exactly one** rule matches. If multiple rules match the input, an `InvalidOperationException` is thrown.
+```csharp
+decision.UsingHitPolicy(HitPolicy.Unique);
+// The safest policy for mutually exclusive logic.
+```
+
 ## ✨ Features
 - **100% Strongly Typed**: Catch errors at compile-time, not run-time.
 - **Any Data Type**: Supports classes, records, dictionaries, and primitive types.
