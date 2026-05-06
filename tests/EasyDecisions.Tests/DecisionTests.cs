@@ -10,14 +10,14 @@ public class DecisionTests
     [Fact]
     public void Decision_Name_IsSetCorrectly()
     {
-        var d = new Decision<MyInput, MyOutput>("MyDecisionName");
+        var d = new TestDecision<MyInput, MyOutput>("MyDecisionName");
         Assert.Equal("MyDecisionName", d.Name);
     }
 
     [Fact]
     public void Decision_Evaluate_NoRules_ReturnsDefaultOutput()
     {
-        var d = new Decision<MyInput, MyOutput>("NoRules");
+        var d = new TestDecision<MyInput, MyOutput>("NoRules");
         var output = d.Evaluate(new MyInput { Count = 10 });
         
         Assert.Null(output.A);
@@ -29,7 +29,7 @@ public class DecisionTests
     [Fact]
     public void Decision_Evaluate_ShouldApplyMatchingRules()
     {
-        var d = new Decision<MyInput, MyOutput>("MyDecision");
+        var d = new TestDecision<MyInput, MyOutput>("MyDecision");
 
         d.When(x => x.IsValid)
          .And(x => x.Count > 5)
@@ -53,7 +53,7 @@ public class DecisionTests
     [Fact]
     public void Decision_Evaluate_ShouldNotApplyNonMatchingRules()
     {
-        var d = new Decision<MyInput, MyOutput>("MyDecision");
+        var d = new TestDecision<MyInput, MyOutput>("MyDecision");
 
         d.When(x => x.IsValid)
          .And(x => x.Count > 5)
@@ -71,7 +71,7 @@ public class DecisionTests
     [Fact]
     public void Decision_Evaluate_MultipleRulesMatching_ShouldApplyAllInOrder()
     {
-        var d = new Decision<MyInput, MyOutput>("MyDecision");
+        var d = new TestDecision<MyInput, MyOutput>("MyDecision");
 
         d.When(x => x.IsValid)
          .Then(x => x.TotalScore += 10)
@@ -96,7 +96,7 @@ public class DecisionTests
     [Fact]
     public void Decision_Evaluate_RuleWithNoConditions_ShouldAlwaysMatch()
     {
-        var d = new Decision<MyInput, MyOutput>("MyDecision");
+        var d = new TestDecision<MyInput, MyOutput>("MyDecision");
 
         d.When(x => true).Then(x => x.A = "Default").Build();
 
@@ -107,7 +107,7 @@ public class DecisionTests
     [Fact]
     public void Decision_Evaluate_RuleWithNoActions_ShouldNotModifyOutput()
     {
-        var d = new Decision<MyInput, MyOutput>("MyDecision");
+        var d = new TestDecision<MyInput, MyOutput>("MyDecision");
 
         d.When(x => x.IsValid).Then(x => { }).Build(); // Empty action
 
@@ -119,7 +119,7 @@ public class DecisionTests
     [Fact]
     public void Decision_Evaluate_ComplexConditionsAndActions()
     {
-        var d = new Decision<MyInput, MyOutput>("Complex");
+        var d = new TestDecision<MyInput, MyOutput>("Complex");
 
         d.When(x => x.IsValid)
          .And(x => x.Amount > 1000)

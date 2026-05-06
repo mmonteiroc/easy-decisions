@@ -27,12 +27,12 @@ public class Decision<TInput, TOutput> : IDecision where TOutput : new()
     public HitPolicy HitPolicy { get; protected set; } = HitPolicy.Collect;
     private readonly List<DecisionRule<TInput, TOutput>> _rules = new();
 
-    public Decision()
+    protected Decision()
     {
         Name = GetType().Name;
     }
 
-    public Decision(string name)
+    protected Decision(string name)
     {
         Name = name;
     }

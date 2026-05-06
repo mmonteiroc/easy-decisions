@@ -8,7 +8,7 @@ public class AssignmentApiTests
     [Fact]
     public void Decision_WithNewAssignmentApi_ShouldWorkCorrectly()
     {
-        var d = new Decision<MyInput, MyOutput>("AssignmentApiTest");
+        var d = new TestDecision<MyInput, MyOutput>("AssignmentApiTest");
 
         // Using the new API
         d.When(x => x.Count > 10)
@@ -36,7 +36,7 @@ public class AssignmentApiTests
     [Fact]
     public void Decision_MixedApi_ShouldWorkCorrectly()
     {
-        var d = new Decision<MyInput, MyOutput>("MixedApiTest");
+        var d = new TestDecision<MyInput, MyOutput>("MixedApiTest");
 
         d.When(x => x.IsValid)
          .Then(x => x.A = "Valid")

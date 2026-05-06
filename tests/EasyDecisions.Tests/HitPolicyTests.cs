@@ -10,14 +10,14 @@ public class HitPolicyTests
     [Fact]
     public void HitPolicy_Default_IsCollect()
     {
-        var d = new Decision<MyInput, MyOutput>("DefaultCollect");
+        var d = new TestDecision<MyInput, MyOutput>("DefaultCollect");
         Assert.Equal(HitPolicy.Collect, d.HitPolicy);
     }
 
     [Fact]
     public void HitPolicy_First_ShouldOnlyApplyFirstMatchingRule()
     {
-        var d = new Decision<MyInput, MyOutput>("FirstPolicy")
+        var d = new TestDecision<MyInput, MyOutput>("FirstPolicy")
             .UsingHitPolicy(HitPolicy.First);
 
         d.When(x => x.Count > 5)
@@ -37,7 +37,7 @@ public class HitPolicyTests
     [Fact]
     public void HitPolicy_Unique_ShouldApplyWhenExactlyOneMatches()
     {
-        var d = new Decision<MyInput, MyOutput>("UniquePolicy")
+        var d = new TestDecision<MyInput, MyOutput>("UniquePolicy")
             .UsingHitPolicy(HitPolicy.Unique);
 
         d.When(x => x.Count > 5)
@@ -56,7 +56,7 @@ public class HitPolicyTests
     [Fact]
     public void HitPolicy_Unique_ShouldThrowWhenMoreThanOneMatches()
     {
-        var d = new Decision<MyInput, MyOutput>("UniquePolicyError")
+        var d = new TestDecision<MyInput, MyOutput>("UniquePolicyError")
             .UsingHitPolicy(HitPolicy.Unique);
 
         d.When(x => x.Count > 5)
@@ -75,7 +75,7 @@ public class HitPolicyTests
     [Fact]
     public void HitPolicy_Unique_ShouldReturnDefaultWhenNoneMatch()
     {
-        var d = new Decision<MyInput, MyOutput>("UniquePolicyNone")
+        var d = new TestDecision<MyInput, MyOutput>("UniquePolicyNone")
             .UsingHitPolicy(HitPolicy.Unique);
 
         d.When(x => x.Count > 100)
@@ -90,7 +90,7 @@ public class HitPolicyTests
     [Fact]
     public void HitPolicy_Collect_ShouldApplyAllMatches()
     {
-        var d = new Decision<MyInput, MyOutput>("CollectPolicy")
+        var d = new TestDecision<MyInput, MyOutput>("CollectPolicy")
             .UsingHitPolicy(HitPolicy.Collect);
 
         d.When(x => x.Count > 5)
