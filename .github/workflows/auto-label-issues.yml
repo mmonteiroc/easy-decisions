@@ -1,0 +1,46 @@
+name: Auto Label Issues
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  label_issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Auto-label based on keywords
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title.toLowerCase();
+            const body = (issue.body || "").toLowerCase();
+            const content = title + " " + body;
+
+            const labelsToAdd = [];
+
+            if (content.includes("docs")) {
+              labelsToAdd.push("documentation");
+            }
+
+            if (content.includes("issue") || content.includes("fix")) {
+              labelsToAdd.push("bug");
+            }
+
+            if (content.includes("request") || content.includes("new feature")) {
+              labelsToAdd.push("enhancement");
+            }
+
+            if (labelsToAdd.length > 0) {
+              // Filter out duplicates if any (though not possible with current logic)
+              const uniqueLabels = [...new Set(labelsToAdd)];
+              
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: uniqueLabels
+              });
+            }
