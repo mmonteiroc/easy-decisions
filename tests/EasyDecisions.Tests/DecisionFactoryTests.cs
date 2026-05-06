@@ -7,8 +7,8 @@ namespace EasyDecisions.Tests;
 
 public class DecisionFactoryTests
 {
-    [DecisionFabricator("STATUS_COLOR")]
-    public class StatusColorDecision : IDecisionFabricator<MyInput, MyOutput>
+    [Decision("STATUS_COLOR")]
+    public class StatusColorDecision : IDecisionFactory<MyInput, MyOutput>
     {
         public Decision<MyInput, MyOutput> Create()
         {
@@ -22,14 +22,25 @@ public class DecisionFactoryTests
         }
     }
 
-    [DecisionFabricator("ANOTHER_DECISION")]
-    public class AnotherDecision : IDecisionFabricator<MyInput, MyOutput>
+    [Decision("ANOTHER_DECISION")]
+    public class AnotherDecision : IDecisionFactory<MyInput, MyOutput>
     {
         public Decision<MyInput, MyOutput> Create()
         {
             var decision = new Decision<MyInput, MyOutput>("ANOTHER_DECISION");
             decision.When(x => x.Category == "A").Then(x => x.A = "ResultA").Build();
             return decision;
+        }
+    }
+
+    [DecisionFabricator("OBSOLETE_DECISION")]
+#pragma warning disable CS0618 // Type or member is obsolete
+    public class ObsoleteDecision : IDecisionFabricator<MyInput, MyOutput>
+#pragma warning restore CS0618 // Type or member is obsolete
+    {
+        public Decision<MyInput, MyOutput> Create()
+        {
+            return new Decision<MyInput, MyOutput>("OBSOLETE_DECISION");
         }
     }
 
@@ -57,7 +68,15 @@ public class DecisionFactoryTests
         {
             DecisionFactory.Create<MyInput, MyOutput>("NON_EXISTENT");
         });
-        Assert.Contains("No decision fabricator found", ex.Message);
+        Assert.Contains("No decision factory found", ex.Message);
+    }
+
+    [Fact]
+    public void DecisionFactory_Create_ObsoleteNaming_ShouldStillWork()
+    {
+        var d = DecisionFactory.Create<MyInput, MyOutput>("OBSOLETE_DECISION");
+        Assert.NotNull(d);
+        Assert.Equal("OBSOLETE_DECISION", d.Name);
     }
 
     public class DifferentInput { }
