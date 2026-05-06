@@ -15,6 +15,7 @@ export default defineConfig({
         items: [
           { text: 'What is EasyDecisions?', link: '/guide/introduction' },
           { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Instantiation & Evaluation', link: '/guide/instantiation' },
           { text: 'Hit Policies', link: '/guide/hit-policies' },
           { text: 'FEEL-like Helpers', link: '/guide/feel-helpers' }
         ]

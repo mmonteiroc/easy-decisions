@@ -18,13 +18,18 @@ Traditional DMN engines force you to define your business rules in external XML 
 Instead of writing XML, you write this:
 
 ```csharp
-var decision = new Decision<MyInput, MyOutput>("Eligibility");
-
-decision.When(i => i.Age >= 18).And(i => i.Country == "US")
-    .Then()
-    .Set(o => o.CanDrink = true)
-    .Set(o => o.CanVote = true)
-    .Build();
+public class EligibilityDecision : Decision<MyInput, MyOutput>
+{
+    public EligibilityDecision() : base("Eligibility")
+    {
+        When(i => i.Age >= 18 && i.Country == "US")
+            .Then(o => {
+                o.CanDrink = true;
+                o.CanVote = true;
+            })
+            .Build();
+    }
+}
 ```
 
 By keeping your rules in code, you gain **IntelliSense**, **compile-time validation**, and seamless **refactoring**, while still keeping your business rules clean and readable.

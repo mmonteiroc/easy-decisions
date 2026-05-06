@@ -61,7 +61,22 @@ decision.When(i => i.Score <= 80).Then(o => o.Approved = false).Build();
 
 ## How to Set a Hit Policy
 
-You can set the hit policy using the `.UsingHitPolicy()` method on the `Decision` object:
+### Via Derived Class (Recommended)
+Set the `HitPolicy` property in the constructor of your decision class:
+
+```csharp
+public class MyDecision : Decision<MyInput, MyOutput>
+{
+    public MyDecision()
+    {
+        HitPolicy = HitPolicy.First;
+        // ...
+    }
+}
+```
+
+### Via Fluent API
+You can also set it using the `.UsingHitPolicy()` method:
 
 ```csharp
 var decision = new Decision<TInput, TOutput>("MyDecision")

@@ -41,77 +41,66 @@ Install-Package EasyDecisions
 
 ## 🛠️ Usage
 
-Using EasyDecisions is incredibly simple. It leverages C#'s native generic typing to provide full IntelliSense and compile-time safety for any data type you throw at it.
+EasyDecisions offers multiple ways to define and evaluate your business rules, ranging from simple ad-hoc tables to strongly-typed class derivations and automatic factory discovery.
 
-### 1. Define your Input and Output models
-These can be *anything*. Classes, Records, Structs, or even primitives!
+### 1. Define your Models
+Inputs and Outputs can be any C# type (classes, records, or primitives). Your output must have a parameterless constructor.
 
 ```csharp
-public class UserContext
-{
-    public int Age { get; set; }
-    public bool IsPremiumMember { get; set; }
-}
-
-// Note: Your output must have an empty constructor!
-public class DiscountResult
-{
-    public decimal DiscountPercentage { get; set; }
-    public string? Reason { get; set; }
-}
+public record UserContext(int Age, bool IsPremiumMember);
+public class DiscountResult { public decimal Percentage { get; set; } }
 ```
 
-### 2. Create your Decision Factory
-Use the `[Decision]` attribute to register your decision globally. 
+### 2. Define your Decision
+The recommended way is to inherit from `Decision<TInput, TOutput>`. This keeps your logic encapsulated and reusable.
 
 ```csharp
-using EasyDecisions;
-
-[Decision("DISCOUNT_CALCULATOR")]
-public class DiscountDecision : IDecisionFactory<UserContext, DiscountResult>
+public class DiscountDecision : Decision<UserContext, DiscountResult>
 {
-    public Decision<UserContext, DiscountResult> Create()
+    public DiscountDecision() : base("DISCOUNT_CALC")
     {
-        var decision = new Decision<UserContext, DiscountResult>("DISCOUNT_CALCULATOR");
-        
-        // Rule 1: Young premium members
-        decision.When(x => x.Age < 25)
-                .And(x => x.IsPremiumMember)
-                .Then()
-                .Set(x => x.DiscountPercentage = 15m)
-                .Set(x => x.Reason = "Youth Premium Deal")
-                .Build();
-                
-        // Rule 2: Adult premium members
-        decision.When(x => x.Age >= 25)
-                .And(x => x.IsPremiumMember)
-                .Then()
-                .Set(x => x.DiscountPercentage = 10m)
-                .Set(x => x.Reason = "Standard Premium Deal")
-                .Build();
-                
-        return decision;
+        HitPolicy = HitPolicy.First;
+
+        When(x => x.Age < 25 && x.IsPremiumMember)
+            .Then(x => x.Percentage = 15m)
+            .Build();
+
+        When(x => x.IsPremiumMember)
+            .Then(x => x.Percentage = 10m)
+            .Build();
     }
 }
 ```
 
-### 3. Evaluate anywhere in your app!
-Use the `DecisionFactory` to grab your pre-configured decision anywhere in your application and evaluate it against live data.
+### 3. Evaluate
+You can evaluate decisions directly, using a helper, or via a factory.
+
+#### A. Direct Evaluation (Recommended)
+```csharp
+var result = new DiscountDecision().Evaluate(userContext);
+```
+
+#### B. Type-Safe Helper (`EasyDecision`)
+Perfect for one-liners where you don't want to manually instantiate the decision class.
+```csharp
+var result = EasyDecision.Evaluate<DiscountDecision, UserContext, DiscountResult>(userContext);
+```
+
+#### C. Factory Discovery (Zero-Config)
+If you prefer decoupling your instantiation logic, use the `DecisionFactory`. Register your decision with an attribute and implement `IDecisionFactory`.
 
 ```csharp
-// Get the decision engine
-var calculator = DecisionFactory.Create<UserContext, DiscountResult>("DISCOUNT_CALCULATOR");
+[Decision("DISCOUNT_CALC")]
+public class DiscountFactory : IDecisionFactory<UserContext, DiscountResult>
+{
+    public Decision<UserContext, DiscountResult> Create() => new DiscountDecision();
+}
 
-// Evaluate it against real data
-var result = calculator.Evaluate(new UserContext 
-{ 
-    Age = 22, 
-    IsPremiumMember = true 
-});
-
-Console.WriteLine($"Discount: {result.DiscountPercentage}% - {result.Reason}");
-// Output: Discount: 15% - Youth Premium Deal
+// Later in your code...
+var decision = DecisionFactory.Create<UserContext, DiscountResult>("DISCOUNT_CALC");
+var result = decision.Evaluate(userContext);
 ```
+
 
 ## 🚦 Hit Policies
 
