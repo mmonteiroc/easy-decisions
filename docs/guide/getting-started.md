@@ -28,12 +28,14 @@ var discountDecision = new Decision<CartInput, DiscountOutput>("CartDiscount");
 
 // Premium members spending over $100 get 20% off
 discountDecision.When(i => i.IsPremiumMember).And(i => i.Total > 100)
-    .Then(o => o.DiscountPercentage = 20m)
+    .Then()
+    .Set(o => o.DiscountPercentage = 20m)
     .Build();
 
 // Regular members spending over $100 get 10% off
 discountDecision.When(i => !i.IsPremiumMember).And(i => i.Total > 100)
-    .Then(o => o.DiscountPercentage = 10m)
+    .Then()
+    .Set(o => o.DiscountPercentage = 10m)
     .Build();
 ```
 
