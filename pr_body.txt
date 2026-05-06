@@ -1,0 +1,25 @@
+Resolves #3.
+
+This PR introduces a convention-based way to build decisions without string IDs by discovering the single implementation of `IDecisionFactory<TIn, TOut>` for a given pair of generic types.
+
+### New API Example
+
+```csharp
+public class DiscountDecision : IDecisionFactory<UserContext, DiscountResult>
+{
+    public Decision<UserContext, DiscountResult> Create() =>
+        new Decision<UserContext, DiscountResult>("Discount")
+            .UsingHitPolicy(HitPolicy.First);
+}
+
+// Call site
+// Exactly one factory exists for <UserContext, DiscountResult>, so no need for an ID!
+var decision = DecisionFactory.Create<UserContext, DiscountResult>();
+```
+
+### Key Changes
+- Implemented `DecisionFactory.Create<TIn, TOut>()` to discover and instantiate unique `IDecisionFactory<TIn, TOut>`.
+- Updated `DecisionFactory.RegisterAssembly` to index interfaces dynamically without relying strictly on the `[Decision]` attribute.
+- Added exceptions `DecisionNotRegisteredException` and `AmbiguousDecisionException` for when 0 or >1 implementations are found.
+- Updated the library's major version to `2.0.0` in `.csproj` to reflect the API update.
+- Added robust unit tests verifying the uniqueness constraints.

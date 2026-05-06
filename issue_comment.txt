@@ -1,0 +1,12 @@
+I've analyzed the request and formulated an implementation plan for convention-based discovery.
+
+### Proposed Implementation Details:
+1. **Discovery Logic**: Update DecisionFactory.RegisterAssembly to scan for all non-abstract classes implementing IDecisionFactory<TIn, TOut>.
+2. **Generic Create Method**: Add public static Decision<TIn, TOut> Create<TIn, TOut>() which resolves the factory based on type arguments.
+3. **Validation**: 
+   - Throw DecisionNotRegisteredException if no implementation is found.
+   - Throw AmbiguousDecisionException if more than one implementation exists for the same type pair.
+4. **Backward Compatibility**: Keep the existing attribute-based discovery and Create(name) method fully functional.
+5. **Attribute Removal**: Transition towards optional attributes for generic discovery, while maintaining them for named discovery.
+
+I'm ready to start the implementation once this approach is confirmed.

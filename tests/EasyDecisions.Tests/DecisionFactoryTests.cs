@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using EasyDecisions;
+using EasyDecisions.Exceptions;
 using EasyDecisions.Tests.TestModels;
 
 namespace EasyDecisions.Tests;
@@ -91,5 +92,41 @@ public class DecisionFactoryTests
             DecisionFactory.Create<DifferentInput, DifferentOutput>("STATUS_COLOR");
         });
         Assert.Contains("does not implement", ex.Message);
+    }
+
+    public class UniqueInput { }
+    public class UniqueOutput { public UniqueOutput() { } }
+
+    public class UniqueDecision : IDecisionFactory<UniqueInput, UniqueOutput>
+    {
+        public Decision<UniqueInput, UniqueOutput> Create() => new Decision<UniqueInput, UniqueOutput>("UNIQUE");
+    }
+
+    [Fact]
+    public void DecisionFactory_CreateGeneric_SingleImplementation_ReturnsDecision()
+    {
+        var decision = DecisionFactory.Create<UniqueInput, UniqueOutput>();
+        Assert.NotNull(decision);
+        Assert.Equal("UNIQUE", decision.Name);
+    }
+
+    [Fact]
+    public void DecisionFactory_CreateGeneric_NoImplementation_ThrowsDecisionNotRegisteredException()
+    {
+        Assert.Throws<DecisionNotRegisteredException>(() =>
+        {
+            DecisionFactory.Create<DifferentInput, DifferentOutput>();
+        });
+    }
+
+    [Fact]
+    public void DecisionFactory_CreateGeneric_MultipleImplementations_ThrowsAmbiguousDecisionException()
+    {
+        // MyInput and MyOutput have multiple implementations (StatusColorDecision, AnotherDecision, ObsoleteDecision)
+        var ex = Assert.Throws<AmbiguousDecisionException>(() =>
+        {
+            DecisionFactory.Create<MyInput, MyOutput>();
+        });
+        Assert.Contains("Expected exactly 1, but found", ex.Message);
     }
 }

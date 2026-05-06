@@ -4,6 +4,7 @@
     <TargetFrameworks>net6.0;net8.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>2.0.0</Version>
     <PackageId>EasyDecisions</PackageId>
     <Authors>mmonteiroc</Authors>
     <Description>A fluent, DMN-like decision engine for .NET.</Description>
