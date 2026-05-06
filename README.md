@@ -61,14 +61,14 @@ public class DiscountResult
 }
 ```
 
-### 2. Create your Decision Fabricator
-Use the `[DecisionFabricator]` attribute to register your decision globally. 
+### 2. Create your Decision Factory
+Use the `[Decision]` attribute to register your decision globally. 
 
 ```csharp
 using EasyDecisions;
 
-[DecisionFabricator("DISCOUNT_CALCULATOR")]
-public class DiscountDecision : IDecisionFabricator<UserContext, DiscountResult>
+[Decision("DISCOUNT_CALCULATOR")]
+public class DiscountDecision : IDecisionFactory<UserContext, DiscountResult>
 {
     public Decision<UserContext, DiscountResult> Create()
     {
@@ -139,16 +139,16 @@ decision.UsingHitPolicy(HitPolicy.Unique);
 ## ✨ Features
 - **100% Strongly Typed**: Catch errors at compile-time, not run-time.
 - **Any Data Type**: Supports classes, records, dictionaries, and primitive types.
-- **Zero-Config Discovery**: Automatic assembly scanning using `DecisionFactory` & `[DecisionFabricator]`.
+- **Zero-Config Discovery**: Automatic assembly scanning using `DecisionFactory` & `[Decision]`.
 - **Lightweight**: Zero external dependencies. Fast and efficient.
 
 ## 🔧 Troubleshooting
 
 ### Do I need to register decisions in my Dependency Injection (DI) container?
-**No.** EasyDecisions requires essentially zero setup. It uses a static `DecisionFactory` that automatically scans your loaded assemblies the very first time you call `DecisionFactory.Create()`. It finds any classes decorated with the `[DecisionFabricator]` attribute and registers them internally.
+**No.** EasyDecisions requires essentially zero setup. It uses a static `DecisionFactory` that automatically scans your loaded assemblies the very first time you call `DecisionFactory.Create()`. It finds any classes decorated with the `[Decision]` attribute and registers them internally.
 
-### What if it says "No decision fabricator found" but I added the attribute?
-In rare cases, if your Decision Fabricators are located in a completely separate project or assembly that hasn't been executed or loaded into the `AppDomain` yet, the automatic scanner might miss it. 
+### What if it says "No decision factory found" but I added the attribute?
+In rare cases, if your Decision Factories are located in a completely separate project or assembly that hasn't been executed or loaded into the `AppDomain` yet, the automatic scanner might miss it. 
 
 You can fix this by explicitly registering that assembly anywhere in your application startup (like in your `Program.cs`):
 

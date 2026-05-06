@@ -6,16 +6,16 @@ using System.Reflection;
 namespace EasyDecisions;
 
 /// <summary>
-/// Factory for instantiating decisions that have been registered via the <see cref="DecisionFabricatorAttribute"/>.
+/// Factory for instantiating decisions that have been registered via the <see cref="DecisionAttribute"/>.
 /// </summary>
 public static class DecisionFactory
 {
-    private static readonly ConcurrentDictionary<string, Type> _fabricatorTypes = new();
+    private static readonly ConcurrentDictionary<string, Type> _decisionTypes = new();
     private static bool _initialized = false;
     private static readonly object _initLock = new();
 
     /// <summary>
-    /// Explicitly registers all decision fabricators found in the given assembly.
+    /// Explicitly registers all decision factories found in the given assembly.
     /// </summary>
     /// <param name="assembly">The assembly to scan.</param>
     public static void RegisterAssembly(Assembly assembly)
@@ -24,14 +24,14 @@ public static class DecisionFactory
         {
             var types = assembly.GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract)
-                .Where(t => t.GetCustomAttribute<DecisionFabricatorAttribute>() != null);
+                .Where(t => t.GetCustomAttribute<DecisionAttribute>() != null);
 
             foreach (var type in types)
             {
-                var attr = type.GetCustomAttribute<DecisionFabricatorAttribute>();
+                var attr = type.GetCustomAttribute<DecisionAttribute>();
                 if (attr != null)
                 {
-                    _fabricatorTypes[attr.Name] = type;
+                    _decisionTypes[attr.Name] = type;
                 }
             }
         }
@@ -73,25 +73,25 @@ public static class DecisionFactory
     /// </summary>
     /// <typeparam name="TInput">The input type of the decision.</typeparam>
     /// <typeparam name="TOutput">The output type of the decision.</typeparam>
-    /// <param name="name">The name defined in the <see cref="DecisionFabricatorAttribute"/>.</param>
+    /// <param name="name">The name defined in the <see cref="DecisionAttribute"/>.</param>
     /// <returns>The created decision instance.</returns>
     /// <exception cref="ArgumentException">Thrown if the decision name is not found.</exception>
-    /// <exception cref="InvalidOperationException">Thrown if the fabricator does not match the expected generic types.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the factory does not match the expected generic types.</exception>
     public static Decision<TInput, TOutput> Create<TInput, TOutput>(string name) where TOutput : new()
     {
         EnsureInitialized();
 
-        if (!_fabricatorTypes.TryGetValue(name, out var type))
+        if (!_decisionTypes.TryGetValue(name, out var type))
         {
-            throw new ArgumentException($"No decision fabricator found with name '{name}'. Make sure the class has a [DecisionFabricator(\"{name}\")] attribute.");
+            throw new ArgumentException($"No decision factory found with name '{name}'. Make sure the class has a [Decision(\"{name}\")] attribute.");
         }
 
-        if (!typeof(IDecisionFabricator<TInput, TOutput>).IsAssignableFrom(type))
+        if (!typeof(IDecisionFactory<TInput, TOutput>).IsAssignableFrom(type))
         {
-            throw new InvalidOperationException($"The fabricator for '{name}' does not implement IDecisionFabricator<{typeof(TInput).Name}, {typeof(TOutput).Name}>.");
+            throw new InvalidOperationException($"The factory for '{name}' does not implement IDecisionFactory<{typeof(TInput).Name}, {typeof(TOutput).Name}>.");
         }
 
-        var fabricator = (IDecisionFabricator<TInput, TOutput>)Activator.CreateInstance(type)!;
-        return fabricator.Create();
+        var factory = (IDecisionFactory<TInput, TOutput>)Activator.CreateInstance(type)!;
+        return factory.Create();
     }
 }
