@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using EasyDecisions.Exceptions;
 
 namespace EasyDecisions;
 
@@ -11,6 +13,7 @@ namespace EasyDecisions;
 public static class DecisionFactory
 {
     private static readonly ConcurrentDictionary<string, Type> _decisionTypes = new();
+    private static readonly ConcurrentDictionary<Type, List<Type>> _genericDecisionTypes = new();
     private static bool _initialized = false;
     private static readonly object _initLock = new();
 
@@ -23,8 +26,7 @@ public static class DecisionFactory
         try
         {
             var types = assembly.GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract)
-                .Where(t => t.GetCustomAttribute<DecisionAttribute>() != null);
+                .Where(t => t.IsClass && !t.IsAbstract);
 
             foreach (var type in types)
             {
@@ -32,6 +34,19 @@ public static class DecisionFactory
                 if (attr != null)
                 {
                     _decisionTypes[attr.Name] = type;
+                }
+
+                var factoryInterface = type.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDecisionFactory<,>));
+                if (factoryInterface != null)
+                {
+                    var list = _genericDecisionTypes.GetOrAdd(factoryInterface, _ => new List<Type>());
+                    lock (list)
+                    {
+                        if (!list.Contains(type))
+                        {
+                            list.Add(type);
+                        }
+                    }
                 }
             }
         }
@@ -91,6 +106,34 @@ public static class DecisionFactory
             throw new InvalidOperationException($"The factory for '{name}' does not implement IDecisionFactory<{typeof(TInput).Name}, {typeof(TOutput).Name}>.");
         }
 
+        var factory = (IDecisionFactory<TInput, TOutput>)Activator.CreateInstance(type)!;
+        return factory.Create();
+    }
+
+    /// <summary>
+    /// Creates a new instance of a decision by finding the single registered factory for the specified input and output types.
+    /// </summary>
+    /// <typeparam name="TInput">The input type of the decision.</typeparam>
+    /// <typeparam name="TOutput">The output type of the decision.</typeparam>
+    /// <returns>The created decision instance.</returns>
+    /// <exception cref="DecisionNotRegisteredException">Thrown if no factory is found for the given types.</exception>
+    /// <exception cref="AmbiguousDecisionException">Thrown if multiple factories are found for the given types.</exception>
+    public static Decision<TInput, TOutput> Create<TInput, TOutput>() where TOutput : new()
+    {
+        EnsureInitialized();
+
+        var interfaceType = typeof(IDecisionFactory<TInput, TOutput>);
+        if (!_genericDecisionTypes.TryGetValue(interfaceType, out var implementations) || implementations.Count == 0)
+        {
+            throw new DecisionNotRegisteredException($"No decision factory found for input type '{typeof(TInput).Name}' and output type '{typeof(TOutput).Name}'.");
+        }
+
+        if (implementations.Count > 1)
+        {
+            throw new AmbiguousDecisionException($"Multiple decision factories found for input type '{typeof(TInput).Name}' and output type '{typeof(TOutput).Name}'. Expected exactly 1, but found {implementations.Count}.");
+        }
+
+        var type = implementations[0];
         var factory = (IDecisionFactory<TInput, TOutput>)Activator.CreateInstance(type)!;
         return factory.Create();
     }

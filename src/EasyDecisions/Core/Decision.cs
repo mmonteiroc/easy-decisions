@@ -12,8 +12,13 @@ namespace EasyDecisions;
 public class Decision<TInput, TOutput> where TOutput : new()
 {
     public string Name { get; }
-    public HitPolicy HitPolicy { get; private set; } = HitPolicy.Collect;
+    public HitPolicy HitPolicy { get; protected set; } = HitPolicy.Collect;
     private readonly List<DecisionRule<TInput, TOutput>> _rules = new();
+
+    public Decision()
+    {
+        Name = GetType().Name;
+    }
 
     public Decision(string name)
     {
@@ -30,6 +35,8 @@ public class Decision<TInput, TOutput> where TOutput : new()
         HitPolicy = policy;
         return this;
     }
+
+
 
     /// <summary>
     /// Starts the definition of a new decision rule with a condition.
