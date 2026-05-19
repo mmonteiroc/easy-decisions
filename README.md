@@ -8,9 +8,18 @@
 [![NuGet](https://img.shields.io/nuget/v/EasyDecisions.svg)](https://www.nuget.org/packages/EasyDecisions)
 [![GitHub stars](https://img.shields.io/github/stars/mmonteiroc/easy-decisions)](https://github.com/mmonteiroc/easy-decisions/stargazers)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+  <a href="https://www.star-history.com/?repos=mmonteiroc%2Feasy-decisions&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mmonteiroc/easy-decisions&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mmonteiroc/easy-decisions&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mmonteiroc/easy-decisions&type=date&legend=bottom-right" />
+ </picture>
+</a>
+
 </div>
 
-<br />
+
 
 ## 💡 What is EasyDecisions?
 
